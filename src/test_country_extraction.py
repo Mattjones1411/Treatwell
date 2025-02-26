@@ -3,11 +3,8 @@ import json
 import boto3
 import requests
 from datetime import date
-from unittest.mock import patch, Mock, MagicMock
-from concurrent.futures import Future
+from unittest.mock import patch, Mock
 
-# Import the module to be tested
-# Assuming the module is named country_extraction.py
 import country_extraction
 
 
