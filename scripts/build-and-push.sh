@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AWS_REGION="us-east-1"
+AWS_REGION="eu-west-1"
 ECR_REPO_NAME="country-extraction-job"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
