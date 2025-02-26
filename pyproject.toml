@@ -1,7 +1,7 @@
 [project]
-name = country-extraction
-version = 1.0
-requires-python = ">= 3.11"
+name = "country-extraction"
+version = "1.0"
+requires-python = ">=3.11"
 dependencies = [
   "requests",
   "boto3",
@@ -17,6 +17,3 @@ dependencies = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-
-

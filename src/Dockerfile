@@ -36,4 +36,4 @@ RUN poetry install --no-dev
 # Copy application code
 COPY country_extraction.py .
 
-CMD ["poetry", "run", "python", "your_main_script.py"] 
+CMD ["poetry", "run", "python", "country_extraction.py"] 

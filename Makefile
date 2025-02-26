@@ -1,6 +1,6 @@
 # Makefile for Countries Data Extraction Application
 
-.PHONY: help setup test lint format clean build run run-tests debug docker-build docker-shell
+.PHONY: help setup test lint format clean build run run-tests debug docker-build docker-run
 
 # Variables
 PYTHON = python3
@@ -35,9 +35,9 @@ format: ## Format code with black
 	black src/
 
 clean: ## Remove build artifacts
-	rm -rf src/__pycache__/
-	rm -rf terraform/.terraform
+	rm -rf __pycache__/
 	rm -rf terraform/terraform.tfstate
+	rm -rf terraform/.terraform
 
 run: ## Run the application
 	$(PYTHON) $(APP_NAME).py
@@ -47,6 +47,9 @@ debug: ## Run the application in debug mode
 
 docker-build: ## Build Docker image
 	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+
+docker-run: ## Run Docker container
+	docker run --rm $(DOCKER_IMAGE):$(DOCKER_TAG)
 
 docker-shell: ## Get a shell inside the Docker container
 	docker run --rm -it $(DOCKER_IMAGE):$(DOCKER_TAG) /bin/bash
