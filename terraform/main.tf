@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1" # Change as needed
+  region = "eu-west-1" # Change as needed
 }
 
 # ========================
@@ -37,7 +37,7 @@ resource "aws_ecs_cluster" "data_extract_cluster" {
 # ECS Task Definition
 # ========================
 resource "aws_ecs_task_definition" "data_extract_task" {
-  family                   = "data-extract-task"
+  family                   = "country-extraction-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -47,14 +47,14 @@ resource "aws_ecs_task_definition" "data_extract_task" {
   container_definitions = jsonencode([
     {
       name      = "country-extraction-container"
-      image     = "<your-account-id>.dkr.ecr.us-east-1.amazonaws.com/data-extract-job:latest"
+      image     = "<your-account-id>.dkr.ecr.eu-west-1.amazonaws.com/country-extraction-job:latest"
       essential = true
       command   = ["poetry", "country-extraction.py"]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           awslogs-group         = "/ecs/country-extraction-logs"
-          awslogs-region        = "us-east-1"
+          awslogs-region        = "eu-west-1"
           awslogs-stream-prefix = "ecs"
         }
       }
