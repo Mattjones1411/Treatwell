@@ -1,6 +1,6 @@
 # Makefile for Countries Data Extraction Application
 
-.PHONY: help setup test lint format clean build run run-tests debug docker-build docker-run docker-push
+.PHONY: help setup test lint format clean build run run-tests debug docker-build docker-shell
 
 # Variables
 PYTHON = python3
