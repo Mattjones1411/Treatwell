@@ -1,7 +1,6 @@
 import requests
 import json
 import boto3
-import os
 import logging
 from datetime import date
 from concurrent.futures import ThreadPoolExecutor
@@ -66,7 +65,7 @@ def run():
     """Main function to orchestrate the process."""
     countries_dataset = extract_countries()
     if not countries_dataset:
-        logging.error("No countries data fetched. Exiting...")
+        logging.error("No countries data fetched.")
         return
 
     translations_dataset = fetch_translations(countries_dataset)
