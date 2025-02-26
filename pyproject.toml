@@ -1,0 +1,22 @@
+[project]
+name = country-extraction
+version = 1.0
+requires-python = ">= 3.11"
+dependencies = [
+  "requests",
+  "boto3",
+  "python-dateutil",
+  "black",
+  "pylint",
+  "moto",
+  "pytest",
+  "pytest-mock",
+  "pytest-cov"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+
