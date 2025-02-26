@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket         = var.backend_bucket
+    bucket         = "terraform"
     key            = "country-extraction/terraform.tfstate"
-    region         = var.aws_region
-    dynamodb_table = var.backend_bucket
+    region         = "eu-west-1"
+    dynamodb_table = "terraform"
     encrypt        = true
   }
 }

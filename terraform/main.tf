@@ -1,7 +1,3 @@
-provider "aws" {
-  region = "eu-west-1" # Change as needed
-}
-
 # ========================
 # IAM Role for ECS Task Execution
 # ========================
@@ -47,14 +43,14 @@ resource "aws_ecs_task_definition" "data_extract_task" {
   container_definitions = jsonencode([
     {
       name      = "country-extraction-container"
-      image     = "<your-account-id>.dkr.ecr.eu-west-1.amazonaws.com/country-extraction-job:latest"
+      image     = "${var.aws_account_id}.dkr.ecr.eu-west-1.amazonaws.com/country-extraction-job:latest"
       essential = true
       command   = ["poetry", "country-extraction.py"]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
           awslogs-group         = "/ecs/country-extraction-logs"
-          awslogs-region        = "eu-west-1"
+          awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
         }
       }

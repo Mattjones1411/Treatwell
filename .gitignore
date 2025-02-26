@@ -1,1 +1,3 @@
-src/pytest_cache/
+src/__pycache__/
+terraform/terraform.tfstate
+.pytest_cache

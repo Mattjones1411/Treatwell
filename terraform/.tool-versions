@@ -1,0 +1,5 @@
+# This file controls the version of Terraform (and other tools) that will run
+# if you have asdf-vm installed. See https://asdf-vm.com/ for more information.
+
+# WARNING! Source of truth is in ./ci/install-dependencies.sh
+terraform 1.9.4

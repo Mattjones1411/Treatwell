@@ -35,7 +35,8 @@ format: ## Format code with black
 	black src/
 
 clean: ## Remove build artifacts
-	rm -rf __pycache__/
+	rm -rf src/__pycache__/
+	rm -rf .pytest_cache/
 	rm -rf terraform/terraform.tfstate
 	rm -rf terraform/.terraform
 
