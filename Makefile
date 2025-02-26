@@ -16,16 +16,10 @@ help: ## Show this help menu
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Install dependencies
-	poetry install -r requirements.txt
-
-setup-dev: setup ## Install development dependencies
-	poetry install -r requirements.txt[dev]
+	pip install pyproject.toml
 
 test: ## Run tests
-	pytest test_$(APP_NAME).py -v
-
-test-coverage: ## Run tests with coverage report
-	pytest test_$(APP_NAME).py --cov=$(APP_NAME) --cov-report=term --cov-report=html
+	pytest src/test_$(APP_NAME).py -v
 
 lint: ## Check code style with flake8 and pylint
 	flake8 src/$(APP_NAME).py
