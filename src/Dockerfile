@@ -27,13 +27,14 @@ RUN apt-get update && \
     && apt-get purge -y --auto-remove curl unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements file
+# Copy the poetry project file
 COPY pyproject.toml .
 
-# Install dependencies
-RUN poetry install --no-dev
+# Install dependencies without dev dependencies and without installing the current project itself
+RUN poetry install --without dev --no-root
 
-# Copy application code
-COPY country_extraction.py .
+# Copy the application code (adjust path if necessary)
+COPY src/country_extraction.py .
 
-CMD ["poetry", "run", "python", "country_extraction.py"] 
+# Set the default command to run the app using Poetry
+CMD ["poetry", "run", "python", "country_extraction.py"]

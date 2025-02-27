@@ -11,9 +11,34 @@ dependencies = [
   "moto",
   "pytest",
   "pytest-mock",
-  "pytest-cov"
+  "pytest-cov",
+  "ruff"
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.poetry]
+name = "country-extraction"
+version = "1.0.0"
+description = "Extract country data and translations"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "*"
+boto3 = "*"
+python-dateutil = "*"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "*"
+pytest = "*"
+pytest-mock = "*"
+pytest-cov = "*"
+pre-commit = "*"
+moto = "*"
+
+[tool.ruff]
+line-length = 100
+target-version = 'py311'
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "tab"
+docstring-code-format = true

@@ -21,33 +21,34 @@ setup: ## Install dependencies
 test: ## Run tests
 	pytest src/test_$(APP_NAME).py -v
 
-lint: ## Check code style with flake8 and pylint
-	flake8 src/$(APP_NAME).py
-	pylint src/$(APP_NAME).py
-
-format: ## Format code with black
-	black src/
+lint: ## Lint with ruff
+	ruff format src/
 
 clean: ## Remove build artifacts
 	rm -rf src/__pycache__/
 	rm -rf .pytest_cache/
 	rm -rf terraform/terraform.tfstate
 	rm -rf terraform/.terraform
+	rm -rf .ruff_cache/
 
 run: ## Run the application
-	$(PYTHON) $(APP_NAME).py
+	$(PYTHON) src/$(APP_NAME).py
 
 debug: ## Run the application in debug mode
-	LOGGING_LEVEL=DEBUG $(PYTHON) $(APP_NAME).py
+	LOGGING_LEVEL=DEBUG $(PYTHON) src/$(APP_NAME).py
 
 docker-build: ## Build Docker image
-	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f src/Dockerfile .
 
-docker-run: ## Run Docker container
-	docker run --rm $(DOCKER_IMAGE):$(DOCKER_TAG)
-
-docker-shell: ## Get a shell inside the Docker container
-	docker run --rm -it $(DOCKER_IMAGE):$(DOCKER_TAG) /bin/bash
+docker-run: ## Run Docker container with AWS credentials mounted
+	docker run --rm \
+		-v ~/.aws:/root/.aws \
+		$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 aws-configure: ## Configure AWS credentials
 	aws configure
+
+docker-clean: ## Remove all Docker containers and images related to this repo
+	docker ps -q | xargs -r docker stop
+	docker ps -aq | xargs -r docker rm
+	docker images -q "$(DOCKER_IMAGE)" | xargs -r docker rmi -f
