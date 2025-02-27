@@ -27,6 +27,15 @@ jobs:
       - name: Install Dependencies
         run: poetry install --no-root
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.9.4"
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform/
+
       - name: Run Pre-Commit Hooks
         run: poetry run pre-commit run --all-files
 
@@ -74,14 +83,9 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: infra/
+        working-directory: terraform/
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-        working-directory: infra/
+        working-directory: terraform/
 
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plan
-          path: infra/tfplan
