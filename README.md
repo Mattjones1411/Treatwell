@@ -1,0 +1,1 @@
+This application is designed to extract data on countries from two endpoints on a daily basis.

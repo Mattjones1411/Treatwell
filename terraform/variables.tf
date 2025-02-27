@@ -1,14 +1,11 @@
-variable "backend_bucket" {
-    type = string
-    description = "The bucket to keep the TF state file in"
-}
-
 variable "aws_region" {
-    type = string
-    description = "The aws region" 
+  description = "The AWS region to deploy resources to"
+  type        = string
+  default     = "us-east-1"
 }
 
-variable "aws_account_id" {
-  type = string
-  description = "aws account id"
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket to store country data"
+  type        = string
+  default     = "countries-extraction"
 }
