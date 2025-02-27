@@ -1,17 +1,3 @@
-# main.tf
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-}
-
 # ECR Repository to store the Docker image
 resource "aws_ecr_repository" "countries_extraction" {
   name                 = "countries-extraction"
@@ -50,7 +36,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "countries_extract
   }
 }
 
-# IAM role for the ECS task
+# IAM role for the ECS task execution
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "countries_extraction_ecs_task_execution_role"
 
@@ -68,10 +54,54 @@ resource "aws_iam_role" "ecs_task_execution_role" {
   })
 }
 
-# Attach the necessary policies to the ECS task execution role
+# IAM role for the ECS task (runtime)
+resource "aws_iam_role" "ecs_task_role" {
+  name = "countries_extraction_ecs_task_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+# Attach the necessary policies to the ECS task execution role.
+# The policy ARN is hard-coded because it's referencing an AWS-managed policy
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# IAM policy for ECR access
+resource "aws_iam_policy" "ecr_access" {
+  name        = "countries_extraction_ecr_access"
+  description = "Allow the task execution role to pull images from ECR"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:BatchCheckLayerAvailability"
+      ]
+      Resource = [aws_ecr_repository.countries_extraction.arn]
+    }]
+  })
+}
+
+# Attach the ECR access policy to the task execution role
+resource "aws_iam_role_policy_attachment" "ecr_access" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = aws_iam_policy.ecr_access.arn
 }
 
 # IAM policy for the task to access S3
@@ -100,7 +130,7 @@ resource "aws_iam_policy" "s3_access" {
 
 # Attach the S3 access policy to the task role
 resource "aws_iam_role_policy_attachment" "s3_access" {
-  role       = aws_iam_role.ecs_task_execution_role.name
+  role       = aws_iam_role.ecs_task_role.name
   policy_arn = aws_iam_policy.s3_access.arn
 }
 
@@ -122,7 +152,7 @@ resource "aws_ecs_task_definition" "countries_extraction" {
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([
     {
@@ -242,6 +272,16 @@ resource "aws_iam_policy" "cloudwatch_events_policy" {
         Effect = "Allow"
         Action = [
           "iam:PassRole"
+        ]
+        Resource = [
+          aws_iam_role.ecs_task_role.arn,
+          aws_iam_role.ecs_task_execution_role.arn
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecs:TagResource"
         ]
         Resource = "*"
       }
