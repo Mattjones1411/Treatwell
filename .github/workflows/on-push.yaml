@@ -83,11 +83,11 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: infra/
+        working-directory: terraform/
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: infra/
+        working-directory: terraform/
 
   docker-deploy:
     name: Build & Push Docker Image
@@ -105,7 +105,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
 
       - name: Make Script Executable
-        run: chmod +x scripts/deploy_to_ecr.sh
+        run: chmod +x scripts/build-and-push.sh
 
       - name: Run Deployment Script
-        run: ./scripts/deploy_to_ecr.sh
+        run: ./scripts/build-and-push.sh

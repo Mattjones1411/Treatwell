@@ -10,6 +10,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # Use a single session for all requests
 session = requests.Session()
+s3_client = boto3.client('s3')
 
 
 def extract_countries():
@@ -39,7 +40,6 @@ def extract_translation(translation):
 def save_to_s3(bucket, file_path, dataset):
 	"""Save JSON data to S3."""
 	try:
-		s3_client = boto3.client('s3')
 		s3_client.put_object(
 			Body=json.dumps(dataset, indent=4),
 			Bucket=bucket,

@@ -16,7 +16,8 @@ help: ## Show this help menu
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Install dependencies
-	pip install pyproject.toml
+	poetry install
+	poetry lock
 
 test: ## Run tests
 	pytest src/test_$(APP_NAME).py -v
@@ -40,9 +41,10 @@ debug: ## Run the application in debug mode
 docker-build: ## Build Docker image
 	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f src/Dockerfile .
 
-docker-run: ## Run Docker container with AWS credentials mounted
+docker-run: ## Run Docker container with AWS credentials for 'dev' account
 	docker run --rm \
 		-v ~/.aws:/root/.aws \
+		-e AWS_PROFILE=dev \
 		$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 aws-configure: ## Configure AWS credentials
@@ -52,3 +54,12 @@ docker-clean: ## Remove all Docker containers and images related to this repo
 	docker ps -q | xargs -r docker stop
 	docker ps -aq | xargs -r docker rm
 	docker images -q "$(DOCKER_IMAGE)" | xargs -r docker rmi -f
+
+tf-plan: ## Run Terraform plan
+	cd terraform
+	terraform init
+	terraform plan
+
+tf-format: ## Format Terraform files
+	cd terraform
+	terraform fmt
